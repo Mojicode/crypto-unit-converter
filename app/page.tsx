@@ -11,56 +11,57 @@ import {
   SelectValue,
 } from "../components/ui/select";
 
-// 修复：将 unitMap 的类型定义为索引签名
 const unitMap: { [key: string]: number } = {
   eth: 1,
   gwei: 1e9,
   wei: 1e18,
 };
 
-const UnitConverter = () => {
+export default function UnitConverter() {
   const [inputValue, setInputValue] = useState("");
   const [fromUnit, setFromUnit] = useState("eth");
   const [toUnit, setToUnit] = useState("wei");
 
   const convert = (value: number, from: string, to: string) => {
-    // 修复：添加类型检查
-    if (!unitMap[from] || !unitMap[to]) {
-      return 0;
-    }
+    if (!unitMap[from] || !unitMap[to]) return 0;
     const ethValue = value / unitMap[from];
     return ethValue * unitMap[to];
   };
 
   const parsedInput = parseFloat(inputValue);
-  const result = !isNaN(parsedInput) && parsedInput !== 0
-    ? convert(parsedInput, fromUnit, toUnit).toLocaleString("en-US", {
-        maximumFractionDigits: 18,
-      })
-    : "";
+  const result =
+    !isNaN(parsedInput) && parsedInput > 0
+      ? convert(parsedInput, fromUnit, toUnit).toLocaleString("en-US", {
+          maximumFractionDigits: 18,
+        })
+      : "";
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-xl rounded-2xl">
-        <CardContent className="space-y-4 p-6">
-          <h1 className="text-2xl font-bold text-center">ETH 单位转换器</h1>
-          
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">输入数值</label>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-300 via-purple-300 to-indigo-200 px-4">
+      <div className="bg-white shadow-xl rounded-3xl max-w-md w-full p-6">
+        <div className="flex items-center gap-2 mb-6">
+          <div className="w-4 h-4 rounded-full bg-purple-500"></div>
+          <h1 className="text-xl font-bold text-purple-700">加密货币单位转换工具</h1>
+        </div>
+
+        <Card className="rounded-xl border-none shadow-none">
+          <CardContent className="space-y-4">
+            <h2 className="text-center text-lg font-semibold text-gray-800">
+              💎 以太坊（ETH）单位转换
+            </h2>
+
+            <label className="block text-sm font-medium text-gray-700">数量：</label>
             <Input
+              placeholder="输入数量"
               type="number"
-              placeholder="输入数值"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              className="text-lg"
             />
-          </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">原始单位</label>
             <Select value={fromUnit} onValueChange={setFromUnit}>
+              <label className="block text-sm font-medium text-gray-700 mt-2">原始单位：</label>
               <SelectTrigger>
-                <SelectValue placeholder="选择原始单位" />
+                <SelectValue placeholder="选择单位" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="eth">ETH</SelectItem>
@@ -68,13 +69,11 @@ const UnitConverter = () => {
                 <SelectItem value="wei">Wei</SelectItem>
               </SelectContent>
             </Select>
-          </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">目标单位</label>
             <Select value={toUnit} onValueChange={setToUnit}>
+              <label className="block text-sm font-medium text-gray-700 mt-2">转换为：</label>
               <SelectTrigger>
-                <SelectValue placeholder="选择目标单位" />
+                <SelectValue placeholder="选择单位" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="eth">ETH</SelectItem>
@@ -82,32 +81,16 @@ const UnitConverter = () => {
                 <SelectItem value="wei">Wei</SelectItem>
               </SelectContent>
             </Select>
-          </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">转换结果</label>
-            <Input 
-              type="text" 
-              readOnly 
-              value={result} 
-              placeholder="转换结果将显示在这里"
-              className="text-lg font-mono bg-gray-50"
+            <Input
+              readOnly
+              value={result}
+              className="bg-gray-100 text-center font-semibold text-purple-700"
+              placeholder="请输入有效的正数"
             />
-          </div>
-
-          {/* 添加转换说明 */}
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <h3 className="text-sm font-semibold text-blue-800 mb-2">单位说明：</h3>
-            <ul className="text-xs text-blue-700 space-y-1">
-              <li>• 1 ETH = 1,000,000,000 Gwei (10^9)</li>
-              <li>• 1 ETH = 1,000,000,000,000,000,000 Wei (10^18)</li>
-              <li>• 1 Gwei = 1,000,000,000 Wei (10^9)</li>
-            </ul>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
-};
-
-export default UnitConverter;
+}
